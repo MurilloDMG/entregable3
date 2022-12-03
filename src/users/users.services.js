@@ -1,22 +1,84 @@
 
-const getAllUsers = () => {
+const usersControllers = require('./users.controllers')
+
+const getAllUsers = (req, res) => {
+    usersControllers.findAllUsers()
+    .then((data) =>{
+        res.status(200).json(data)
+    })
+    .catch((err) =>{
+        res.status(400).json({message: err.message})
+    })
 
 }
 
-const getUserById = () => {
+const getUserById = (req, res) =>{
+    const id = req.params.id
+    usersControllers.findUserById(id)
+      .then(data =>{
+        if(data){
+            res.status(200).json(data)
+        }else{
+            res.status(404).json({message:'Invalid Id'})
+        }
+      })
+      .catch(err => {
+        res.status(400).json({message: err.message})
+      })
+}
+
+const postUser = (req, res) => {
+    const {firs_name, last_name,email, password,birthday} = req.body
+    usersControllers.createUser({firs_name, last_name,email, password,birthday})
+    
+    .then((data) => {
+        res.status(201).json(data)
+     })
+     .catch(err => {
+       res.status(400).json({message: err.message});
+     })  
     
 }
 
-const postUser = () => {
+const patchUser = (req, res) => {
+    const id = req.params.id
+    const {firs_name, last_name,email, password,birthday} = req.body
+    usersControllers.updateUser({firs_name, last_name,email, password,birthday})
+    .then((data) => {
+        if(data){
+         res.status(200).json({message: 'Quote update succesfully with id:' + id})
+        }else{
+         res.status(404).json({message: 'Invalid Id'})
+        }
+    })
+    .catch(err => {
+     res.status(400).json({message: err.message});
+    })  
+}
+
+const deleteUser = (req,res) => {
+    const id = req.params.id
+    usersControllers.deleteUser(id)
+    .then(data =>{
+        if(data){
+            res.status(204).json({message: 'Deleted succesfully'})
+           }else{
+            res.status(404).json({message: 'Invalid Id'})
+           }
+      })
+      .catch(err =>{
+        res.status(400).json({message: err.message});
+      })
     
 }
 
-const patchUser = () => {
-    
-}
+module.exports={
+    getAllUsers,
+    getUserById,
+    postUser,
+    patchUser,
+    deleteUser
 
-const deleteUser = () => {
-    
 }
 
 
